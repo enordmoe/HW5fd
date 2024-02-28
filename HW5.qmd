@@ -1,0 +1,175 @@
+---
+title: "Math 265: Homework 5"
+subtitle: "Data Import, Factors, Dates and Strings"
+author: "Be Sure to Put Your Name Here"  
+format: 
+    html: 
+      toc: true
+      number-depth: 3
+      theme: zephyr
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| include: false
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+**Due date: March 6, 2024**
+
+# Introduction
+
+Use this document as a template for writing up your assignment. As in previous assignments, make several commits to your GitHub repository and "submit" by committing and pushing your last commits to the repository from which I will access your work.
+
+# Part 1: Lakers Basketball Revisited \[10 points\]
+
+This exercise revisits the **lakers** dataset included in lubridate (originally from http://www.basketballgeek.com/data/), which contains play-by-play statistics for each Los Angeles Lakers (LAL) basketball game in the 2008-09 season of the NBA. Recall that it is part of **lubridate** which loads when you load the **tidyverse** package. See the Appendix for detailed information about the variables.
+
+1.  Select only those games against the Houston Rockets (abbreviated as "HOU") and save the resulting data as a tibble called `LALvHOU`. Use **tidyverse** commands to answer the following questions about those games in a **single pipe**:
+
+-   How many games between these two teams are recorded in the **lakers** dataset? How many of those games were played at Los Angeles and how many at Houston?
+-   On which dates were they played?
+-   What were their scores? Who won the game?
+
+Hint: All these questions can be answered with a single wrangling pipe. Don't forget about `pivot_wider()` as a way to get an easy to read table of results.
+
+**Answer:**
+
+```{r}
+
+```
+
+2.  Create and add the following time and date **lubridate** variables to the `LALvHOU` tibble. :
+
+-   A `date` that is a variable of type "Date" (rather than a character string)
+-   A variable called `time_clock` that represents the time shown on the clock (as a *period*)
+-   A variable called `time_persec` that represents the time elapsed in the current period (a *duration* in seconds)
+-   A variable called `time_game` that represents the time elapsed in the game overall (as a *duration*).
+
+Hint: An NBA game consists of 4 periods, each of which lasts 12 minutes (i.e., each game’s time should add up to a total of 48 minutes).
+
+**Answer:**
+
+```{r}
+
+```
+
+3.  Using any of the variables from (2) as appropriate, create two graphs: (1) a graph which shows how the "foul"s for each team were distributed over the course of the game and (2) a graph which shows how "3pt" shots were distributed over the course of the game. Use aesthetics identify the team for each "event".
+
+**Answer:**
+
+```{r}
+
+```
+
+4.  Identify the individual player on each team (LAL and HOU) that took the most "shot"s in the `LALvHOU` tibble. How many points did each of these two players score (over all games)? What was their average points scored over the games?
+
+**Answer:**
+
+```{r}
+
+```
+
+5.  Carry out the following for the `LALvHOU` data set:
+
+-   Compute and add a variable for the cumulative `point_total` of each game and team.
+-   Use tidyverse functions to compute the final score (`final_score`) of each game and team.
+-   Do your final scores agree with the results you obtained in question 1 above?
+-   Plot the (cumulative) `point_total` for each game per team as a function of the variable `time_game` you computed in Question 2 above.
+
+**Answer:**
+
+```{r}
+
+```
+
+# Part 2:The Oregon Trail \[10 points\]
+
+In the `data` directory, you will find two files providing data about Airbnb listings in Salem, Oregon. The first, `salem_summary.csv` provides summary information and metrics for Airbnb listings in Salem while the second, `salem_detailed.csv` provides detailed listings data including a `summary` of the property. Be sure to use the correct file to address the question asked.\
+(Source: http://insideairbnb.com/get-the-data.html)
+
+1.  Use the appropriate **readr** function to import the `salem_summary.csv` file into a tibble called `salem_summary`. Ensure that the variable `neighbourhood` is a factor and use ggplot to create a bar chart showing the number of listings in each neighbourhood. Use the appropriate **forcats** command(s) to make sure the bars are in order from smallest (left) to largest (right). If there are any neighbourhoods with fewer than 5 listings, use an appropriate **forcats** command to group them into an "Other" category.
+
+**Answer:**
+
+```{r}
+
+```
+
+2.  Again use the `salem_summary` data to create a plot, but this time create a horizontal boxplot of prices for each neighbourhood. Use an appropriate **forcats** function to ensure that the boxes are sorted from top to bottom in descending order by *median* price.
+
+**Answer:**
+
+```{r}
+
+```
+
+3.  Now read the other file `salem_detailed.csv` into a tibble called `salem_detailed`. This is a considerably larger file than the previous with lots of character variables. Use appropriate string functions to create a histogram of the number of characters in the property `name`. That is, you will create and plot a new numeric variable that gives the number of characters in the property `name`. Look at your histogram and make two observations about the distribution. One should be your evidence-based guess at the maximum number of characters allowed in an Airbnb property `name` and the other should interpret the shape in the context of the data.
+
+**Answer:**
+
+```{r}
+
+```
+
+4.  One question of interest is whether one could identify any relationship between the price of the property and certain words or phrases in the `name` or `summary`. For our purposes here, we will consider possible relationships between words in the `summary` and `price`. Code such as the following might be useful in identify words or phrases of interests. First, inspect the code chunk and answer the following questions:
+    -   What is the `str_detect()` function doing here?\
+    -   What "type" of variable is `present`?\
+    -   What is the reason for using `parse_number()` in the last line?\
+    -   Why might it be necessary to use "na.rm = TRUE" in the last line?\
+    -   How can you tell that at least one property did not have a `summary`?
+
+```{r}
+#| eval: false
+# Be sure to remove eval = FALSE when you want to render and run this code.
+salem_detailed |> 
+  select(summary, price) |> 
+  mutate(present = str_detect(summary, "[Bb]eautiful"))  |> 
+  group_by(present) |> 
+  summarize(mean(parse_number(price), na.rm = TRUE))
+```
+
+**Answer:**
+
+
+5.  Modify the code chunk above to output a summary table like the one shown there except it should output **both the median and number of properties** in each category (TRUE or FALSE) for each of the following possible strings. Hence, you should have 4 chunks and 4 tables comparing properties with and without the specified characteristic.[^1]
+    -   The string "spacious" (starting with small or capital)
+    -   An exclamation mark "!"
+    -   A year, like "1924"or "2016"
+    -   A word of at least 4 letters in all CAPS
+
+[^1]: Later, we will learn how we could make this more efficient by writing an R function.
+
+**Answer:**
+
+```{r}
+
+```
+
+6.  [**Bonus 2 points**] Pick a new string to search for (be creative!) and create a **faceted histogram** comparing the distribution of prices for properties *with* and *without* this string. Comment on what your graph shows. If you use a regular expression to search, be sure you explain what it is you're searching for.
+
+**Answer:**
+
+```{r}
+
+```
+
+
+# Appendix: Lakers data set variables and descriptions
+
+|  Variable   | Description                                                                                                                                                                                                            |
+|:----------:|------------------------------------------------------------|
+|   *date*    | date of the game                                                                                                                                                                                                       |
+| *opponent*  | 3 letter abbreviation for the opposing team                                                                                                                                                                            |
+| *game_type* | whether the game was home or away                                                                                                                                                                                      |
+|   *time*    | time remaining in the period                                                                                                                                                                                           |
+|  *period*   | integer representing the period of the game (1 through 5 where 5 is overtime)                                                                                                                                          |
+|   *etype*   | the general type of play (one of 10 possible types)                                                                                                                                                                    |
+|   *team*    | team involved in the play which could be the home or away team or OFF meaning neither (time outs or jump balls)                                                                                                        |
+|  *player*   | the player that made the play                                                                                                                                                                                          |
+|  *result*   | outcome if the play was a shot (made or missed)                                                                                                                                                                        |
+|  *points*   | number of points scored if a shot or free throws                                                                                                                                                                       |
+|   *type*    | specific type of play or shot (one of 74 specific types)                                                                                                                                                               |
+|  *x*, *y*   | x and y locations on the court (If you are standing behind the offensive team’s hoop then the X axis runs from left to right and the Y axis runs from bottom to top. The center of the hoop is located at (25, 5.25)). |
